@@ -1,0 +1,18 @@
+<input type="text"><input type="text"><button>tijiao</button>
+
+<script>
+   //JSONP
+
+   var mycallback = function(data){
+       alert(data);
+   }
+
+
+    $.ajax({
+        type:'POST'
+        callback:mycallback
+
+    });
+
+
+</script>

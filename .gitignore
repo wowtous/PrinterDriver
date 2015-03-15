@@ -22,7 +22,18 @@ build/Release
 # Dependency directory
 # Commenting this out is preferred by some people, see
 # https://www.npmjs.org/doc/misc/npm-faq.html#should-i-check-my-node_modules-folder-into-git-
-node_modules
+node_modules/async
+node_modules/blob-stream
+node_modules/body-parser
+node_modules/cookie-parser
+node_modules/debug
+node_modules/ejs
+node_modules/express
+node_modules/morgan
+node_modules/request
+node_modules/serve-favicon
 
 # Users Environment Variables
 .lock-wscript
+
+.idea

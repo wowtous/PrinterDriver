@@ -1,0 +1,49 @@
+#! /bin/bash
+
+TMP=/home/wucho/tmp
+TARGET=/home/wucho/tmp
+#TARGET=/home/wucho/projects
+
+CHECK_URL="http://ticketapi.dd885.com/checkupdate"
+CHECK_MD5="http://ticketapi.dd885.com/checkmd5"
+DOWNLOAD_URL="http://ticketapi.dd885.com/checkfile"
+
+MD5_SERVER=$(curl $CHECK_MD5)
+
+if [ ! -w "$TMP" ]
+then
+    echo "$TMP directory is not writable"
+    exit 1
+fi
+
+if [ ! -w "$TARGET" ]
+then
+    echo "$TARGET directory is not writable"
+    exit 2
+fi
+
+if [ $(curl $CHECK_URL) -eq 1 ]
+then
+    wget $DOWNLOAD_URL -O $TMP/$$.tar.gz
+    if [ $? -ne 0 ]
+    then
+        echo "url $DOWNLOAD_URL download error"
+        exit 3
+    fi
+
+    MD5=$(md5sum $TMP/$$.tar.gz | awk '{print $1}')
+
+    if [ "$MD5_SERVER" == "$MD5" ]
+    then
+        tar zxvf $TMP/$$.tar.gz -C $TARGET/
+        if [ $? -ne 0 ]
+        then
+            echo "tar decompress error"
+            exit 4
+        fi
+    fi
+
+    rm $TMP/$$.tar.gz
+fi
+
+exit 0
