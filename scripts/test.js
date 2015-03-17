@@ -10,7 +10,7 @@ var boca = printerList[0];
 if(boca.status == 'STOPPED'){
     console.log('no printer');
 }else{
-    fs.readFile('/home/wucho/f302686bff903dabd242d8cb.pdf',function(error,data){
+    fs.readFile('/home/wucho/ticket.pdf',function(error,data){
         printer.printDirect({
             data    : data,
             printer : boca.name,
