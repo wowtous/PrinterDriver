@@ -9,10 +9,7 @@ var printerFormat = 'PDF';
 var machineIDFile = '/home/wucho/machineID';
 var debug = false;
 var isAppReady = false;
-
-setTimeout(function() {
-    isAppReady = true;
-}, 20 * 1000);
+setTimeout(function(){ isAppReady = true; }, 15 * 1000);
 
 router.get('/print', function (req, res) {
     var postData = req.query;
@@ -22,7 +19,7 @@ router.get('/print', function (req, res) {
         'machineID': '',
         'errorInfo': '',
         'res': {
-            //'error': -1,
+            'error': -1,
             'errorMsg': ''
         }
     };
@@ -61,8 +58,8 @@ router.get('/print', function (req, res) {
             },
             function (cb) {
                 //step3: request ticket data
-                request.post('http://localhost:3000/ticket/verify', {form: postData}, function (error, response, body) {
-                    //request.post('http://ticketapi.dd885.com/ticket/verify',{form:postData},function(error,response,body){
+                //request.post('http://localhost:3000/ticket/verify', {form: postData}, function (error, response, body) {
+                request.post('http://ticketapi.dd885.com/ticket/verify',{form:postData},function(error,response,body){
                     if (error) {
                         errorData.errorInfo = 'httpRequestError';
                         errorData.res.errorMsg = '订单信息请求失败';
@@ -100,7 +97,6 @@ router.get('/print', function (req, res) {
                         cb(errorData, null);
                     }
                 });
-
             }
             //,
             //function(cb){
@@ -120,39 +116,27 @@ router.get('/print', function (req, res) {
             //}
         ], function (error, result) {
             if (error.errorInfo == 'readFileError') {
-                if (debug) {
-                    console.log('errorType:%s,errorMsg:%s', error, result);
-                }
+                if (debug) { console.log('errorType:%s,errorMsg:%s', error, result); }
                 error.error = 700;
                 res.jsonp(error);
             } else if (error.errorInfo == 'printerNotReadyError') {
-                if (debug) {
-                    console.log('errorType:%s,errorMsg:%s', error, result);
-                }
+                if (debug) { console.log('errorType:%s,errorMsg:%s', error, result); }
                 error.error = 701;
                 res.jsonp(error);
             } else if (error.errorInfo == 'httpRequestError') {
-                if (debug) {
-                    console.log('errorType:%s,errorMsg:%s', error, result);
-                }
+                if (debug) { console.log('errorType:%s,errorMsg:%s', error, result); }
                 error.error = 702;
                 res.jsonp(error);
             } else if (error.errorInfo == 'httpRequestResultError') {
-                if (debug) {
-                    console.log('errorType:%s,errorMsg:%s', error, result);
-                }
+                if (debug) { console.log('errorType:%s,errorMsg:%s', error, result); }
                 error.error = 703;
                 res.jsonp(error);
             } else if (error.errorInfo == 'printError') {
-                if (debug) {
-                    console.log('errorType:%s,errorMsg:%s', error, result);
-                }
+                if (debug) { console.log('errorType:%s,errorMsg:%s', error, result); }
                 error.error = 704;
                 res.jsonp(error);
             } else if (error.errorInfo == 'printJobCancel') {
-                if (debug) {
-                    console.log('errorType:%s,errorMsg:%s', error, result);
-                }
+                if (debug) { console.log('errorType:%s,errorMsg:%s', error, result); }
                 error.error = 705;
                 res.jsonp(error);
             } else {

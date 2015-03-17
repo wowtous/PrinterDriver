@@ -1,8 +1,7 @@
 #! /bin/bash
 
-TMP=/home/wucho/tmp
-TARGET=/home/wucho/tmp
-#TARGET=/home/wucho/projects
+TMP=/home/wucho
+TARGET=/home/wucho/projects
 
 CHECK_URL="http://ticketapi.dd885.com/checkupdate"
 CHECK_MD5="http://ticketapi.dd885.com/checkmd5"
