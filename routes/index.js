@@ -7,7 +7,7 @@ var router = express.Router();
 
 var printerFormat = 'PDF';
 var machineIDFile = '/home/wucho/machineID';
-var debug = false;
+var debug = true;
 var isAppReady = false;
 setTimeout(function(){ isAppReady = true; }, 15 * 1000);
 
@@ -52,6 +52,9 @@ router.get('/print', function (req, res) {
                         //errorMsg = '订单信息请求失败';
                         cb('httpRequestError', null);
                     } else {
+                        if(debug){
+                            console.log(body.toString());
+                        }
                         var result = JSON.parse(body);
                         if (result.error == 0) {
                             if (result.buffer.data !== undefined && result.buffer.data) {
@@ -79,6 +82,11 @@ router.get('/print', function (req, res) {
                         cb(null, null);
                     },
                     error: function (err) {
+                        request.post('http://ticketapi.dd885.com/ticket/printFail', {form: postData}, function (error, response, body){
+                            if(error){
+                                // TODO 请求失败处理
+                            }
+                        });
                         cb('printError', null);
                     }
                 });
