@@ -46,8 +46,8 @@ router.get('/print', function (req, res) {
             },
             function (cb) {
                 //step3: request ticket data
-                //request.post('http://localhost:3000/ticket/verify', {form: postData}, function (error, response, body) {
-                request.post('http://ticketapi.dd885.com/ticket/verify',{form:postData},function(error,response,body){
+                request.post('http://localhost:3000/ticket/verify', {form: postData}, function (error, response, body) {
+                //request.post('http://ticketapi.dd885.com/ticket/verify',{form:postData},function(error,response,body){
                     if (error) {
                         //errorMsg = '订单信息请求失败';
                         cb('httpRequestError', null);
@@ -61,8 +61,8 @@ router.get('/print', function (req, res) {
                             }
                             cb(null, null);
                         } else {
-                            ticketAPIError.error = error.error;
-                            ticketAPIError.errorMsg = error.errorMsg;
+                            ticketAPIError.error = result.error;
+                            ticketAPIError.errorMsg = result.errorMsg;
                             cb('httpRequestResultError', null);
                         }
                     }
@@ -102,7 +102,7 @@ router.get('/print', function (req, res) {
         ], function (error, result) {
             if (error == 'readFileError') {
                 //if (debug) { console.log('errorType:%s,errorMsg:%s', error, result); }
-                res.jsonp({error : 700,errorMsg:'读取数据失败'});
+                res.jsonp({error : 700,errorMsg:'获取机器编码失败'});
             } else if (error == 'printerNotReadyError') {
                 //if (debug) { console.log('errorType:%s,errorMsg:%s', error, result); }
                 res.jsonp({error : 701,errorMsg:'打印机正在准备中...'});
@@ -111,7 +111,10 @@ router.get('/print', function (req, res) {
                 res.jsonp({error:702,errorMsg:'订单信息请求失败'});
             } else if (error == 'httpRequestResultError') {
                 //if (debug) { console.log('errorType:%s,errorMsg:%s', error, result); }
-                res.jsonp({error:ticketAPIErrro.error,errorMsg:ticketAPIError.errorMsg})
+                res.jsonp({
+                     error   :ticketAPIError.error
+                    ,errorMsg:ticketAPIError.errorMsg
+                });
             } else if (error == 'printError') {
                 //if (debug) { console.log('errorType:%s,errorMsg:%s', error, result); }
                 res.jsonp({error : 704,errorMsg:'打印出现错误'});
