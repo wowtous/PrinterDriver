@@ -13,16 +13,7 @@ setTimeout(function(){ isAppReady = true; }, 15 * 1000);
 
 router.get('/print', function (req, res) {
     var postData = req.query;
-    var errorData = {
-        'orderID': postData.orderID,
-        'mobile': postData.mobile,
-        'machineID': '',
-        'errorInfo': '',
-        'res': {
-            'error': -1,
-            'errorMsg': ''
-        }
-    };
+    var ticketAPIError = {};
 
     if (isAppReady) {
         var machineID;
@@ -37,12 +28,10 @@ router.get('/print', function (req, res) {
                 fs.readFile(machineIDFile, function (error, data) {
                     //step1: read file;
                     if (error) {
-                        errorData.errorInfo = 'readFileError';
-                        cb(errorData, null);
+                        cb('readFileError', null);
                     } else {
                         machineID = data.toString().replace(/\s/, '').replace(/\n/, "");
                         postData.machineID = machineID;
-                        errorData.machineID = machineID;
                         cb(null, null);
                     }
                 });
@@ -52,8 +41,7 @@ router.get('/print', function (req, res) {
                 if (printer.getPrinters()[0].status == 'IDLE') {
                     cb(null, null);
                 } else {
-                    errorData.errorInfo = 'printerNotReadyError';
-                    cb(errorData, null);
+                    cb('printerNotReadyError', null);
                 }
             },
             function (cb) {
@@ -61,9 +49,8 @@ router.get('/print', function (req, res) {
                 //request.post('http://localhost:3000/ticket/verify', {form: postData}, function (error, response, body) {
                 request.post('http://ticketapi.dd885.com/ticket/verify',{form:postData},function(error,response,body){
                     if (error) {
-                        errorData.errorInfo = 'httpRequestError';
-                        errorData.res.errorMsg = '订单信息请求失败';
-                        cb(errorData, null);
+                        //errorMsg = '订单信息请求失败';
+                        cb('httpRequestError', null);
                     } else {
                         var result = JSON.parse(body);
                         if (result.error == 0) {
@@ -74,10 +61,9 @@ router.get('/print', function (req, res) {
                             }
                             cb(null, null);
                         } else {
-                            errorData.errorInfo = 'httpRequestResultError';
-                            errorData.res.error = result.error;
-                            errorData.res.errorMsg = result.errorMsg;
-                            cb(errorData, null);
+                            ticketAPIError.error = error.error;
+                            ticketAPIError.errorMsg = error.errorMsg;
+                            cb('httpRequestResultError', null);
                         }
                     }
                 });
@@ -93,8 +79,7 @@ router.get('/print', function (req, res) {
                         cb(null, null);
                     },
                     error: function (err) {
-                        errorData.errorInfo = 'printError';
-                        cb(errorData, null);
+                        cb('printError', null);
                     }
                 });
             }
@@ -115,30 +100,24 @@ router.get('/print', function (req, res) {
             //    },5000);
             //}
         ], function (error, result) {
-            if (error.errorInfo == 'readFileError') {
-                if (debug) { console.log('errorType:%s,errorMsg:%s', error, result); }
-                error.error = 700;
-                res.jsonp(error);
-            } else if (error.errorInfo == 'printerNotReadyError') {
-                if (debug) { console.log('errorType:%s,errorMsg:%s', error, result); }
-                error.error = 701;
-                res.jsonp(error);
-            } else if (error.errorInfo == 'httpRequestError') {
-                if (debug) { console.log('errorType:%s,errorMsg:%s', error, result); }
-                error.error = 702;
-                res.jsonp(error);
-            } else if (error.errorInfo == 'httpRequestResultError') {
-                if (debug) { console.log('errorType:%s,errorMsg:%s', error, result); }
-                error.error = 703;
-                res.jsonp(error);
-            } else if (error.errorInfo == 'printError') {
-                if (debug) { console.log('errorType:%s,errorMsg:%s', error, result); }
-                error.error = 704;
-                res.jsonp(error);
-            } else if (error.errorInfo == 'printJobCancel') {
-                if (debug) { console.log('errorType:%s,errorMsg:%s', error, result); }
-                error.error = 705;
-                res.jsonp(error);
+            if (error == 'readFileError') {
+                //if (debug) { console.log('errorType:%s,errorMsg:%s', error, result); }
+                res.jsonp({error : 700,errorMsg:'读取数据失败'});
+            } else if (error == 'printerNotReadyError') {
+                //if (debug) { console.log('errorType:%s,errorMsg:%s', error, result); }
+                res.jsonp({error : 701,errorMsg:'打印机正在准备中...'});
+            } else if (error == 'httpRequestError') {
+                //if (debug) { console.log('errorType:%s,errorMsg:%s', error, result); }
+                res.jsonp({error:702,errorMsg:'订单信息请求失败'});
+            } else if (error == 'httpRequestResultError') {
+                //if (debug) { console.log('errorType:%s,errorMsg:%s', error, result); }
+                res.jsonp({error:ticketAPIErrro.error,errorMsg:ticketAPIError.errorMsg})
+            } else if (error == 'printError') {
+                //if (debug) { console.log('errorType:%s,errorMsg:%s', error, result); }
+                res.jsonp({error : 704,errorMsg:'打印出现错误'});
+            } else if (error == 'printJobCancel') {
+                //if (debug) { console.log('errorType:%s,errorMsg:%s', error, result); }
+                res.jsonp({error : 705,errorMsg:'取消打印'});
             } else {
                 res.jsonp({error: 0});
             }
@@ -192,10 +171,7 @@ router.get('/print', function (req, res) {
             }
         });*/
     } else {
-        errorData.error=703;
-        errorData.res.error=699;
-        errorData.res.errorMsg='应用程序正在准备中，请稍后再试...';
-        res.jsonp(errorData);
+        res.jsonp({error:699,errorMsg:'应用程序正在准备中，请稍后再试...'});
     }
 });
 
