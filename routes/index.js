@@ -46,8 +46,8 @@ router.get('/print', function (req, res) {
             },
             function (cb) {
                 //step3: request ticket data
-                request.post('http://localhost:3000/ticket/verify', {form: postData}, function (error, response, body) {
-                //request.post('http://ticketapi.dd885.com/ticket/verify',{form:postData},function(error,response,body){
+                //request.post('http://localhost:3000/ticket/verify', {form: postData}, function (error, response, body) {
+                request.post('http://ticketapi.dd885.com/ticket/verify',{form:postData},function(error,response,body){
                     if (error) {
                         //errorMsg = '订单信息请求失败';
                         cb('httpRequestError', null);
