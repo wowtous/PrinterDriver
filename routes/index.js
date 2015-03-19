@@ -110,13 +110,13 @@ router.get('/print', function (req, res) {
         ], function (error, result) {
             if (error == 'readFileError') {
                 //if (debug) { console.log('errorType:%s,errorMsg:%s', error, result); }
-                res.jsonp({error : 700,errorMsg:'获取机器编码失败'});
+                res.jsonp({error : 700,errorMsg:'机器编号不匹配!'});
             } else if (error == 'printerNotReadyError') {
                 //if (debug) { console.log('errorType:%s,errorMsg:%s', error, result); }
-                res.jsonp({error : 701,errorMsg:'打印机正在准备中...'});
+                res.jsonp({error : 701,errorMsg:'机器出现异常，请拨打400-885-3885!'});
             } else if (error == 'httpRequestError') {
                 //if (debug) { console.log('errorType:%s,errorMsg:%s', error, result); }
-                res.jsonp({error:702,errorMsg:'订单信息请求失败'});
+                res.jsonp({error:702,errorMsg:'网络出现异常，请重试或联系客服!'});
             } else if (error == 'httpRequestResultError') {
                 //if (debug) { console.log('errorType:%s,errorMsg:%s', error, result); }
                 res.jsonp({
@@ -125,10 +125,10 @@ router.get('/print', function (req, res) {
                 });
             } else if (error == 'printError') {
                 //if (debug) { console.log('errorType:%s,errorMsg:%s', error, result); }
-                res.jsonp({error : 704,errorMsg:'打印出现错误'});
+                res.jsonp({error : 704,errorMsg:'打印失败，请重试!'});
             } else if (error == 'printJobCancel') {
                 //if (debug) { console.log('errorType:%s,errorMsg:%s', error, result); }
-                res.jsonp({error : 705,errorMsg:'取消打印'});
+                res.jsonp({error : 705,errorMsg:'取消打印!'});
             } else {
                 res.jsonp({error: 0});
             }
